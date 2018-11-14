@@ -1,0 +1,14 @@
+base:
+    data_list: [1, 2, 3, 4]
+    data_string: string
+
+train:
+    batch_size: 128
+    lr: 0.0001
+eval:
+    batch_size: 512
+
+hparams:
+    data_format: channels_first
+    weight_decay: 0.0001
+    batch_norm_decay: 0.997
