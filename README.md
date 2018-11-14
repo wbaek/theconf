@@ -1,4 +1,7 @@
 # theconf
+[![CodeFactor](https://www.codefactor.io/repository/github/wbaek/theconf/badge)](https://www.codefactor.io/repository/github/wbaek/theconf)
+[![CircleCI](https://circleci.com/gh/wbaek/theconf.svg?style=svg)](https://circleci.com/gh/wbaek/theconf)
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/wbaek/theconf.svg?columns=all)](https://waffle.io/wbaek/theconf)
 
 Python Package for Managing Configurations
 
@@ -81,7 +84,7 @@ if parsed_args.dump:
     Config.get_instance().dump(parsed_args.dump)
 ```
 
-```python
+```bash
 $ python sample_config.py -h
 usage: sample_config.py -c CONFIG
 sample_config.py: error: the following arguments are required: -c/--config
