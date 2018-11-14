@@ -37,6 +37,9 @@ setup(
     zip_safe=False,
     include_package_data=True,
     setup_requires=[],
-    install_requires=[],
+    install_requires=[
+        'pyyaml',
+        'GitPython',
+    ],
     tests_require=[],
 )
