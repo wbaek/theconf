@@ -52,7 +52,7 @@ class Config():
                 f.write(dump_string)
         return dump_string
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, skip_git_info=False):
         if Config._instance is not None:
             raise Exception('This class is a singleton!')
 
@@ -65,7 +65,8 @@ class Config():
         else:
             self.conf = {}
 
-        self.update_git_info()
+        if not skip_git_info:
+            self.update_git_info()
         Config._instance = self
 
     def __str__(self):

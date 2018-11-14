@@ -29,7 +29,7 @@ class ConfigArgumentParser(argparse.ArgumentParser):
             for k, v in value.items():
                 self._add_argument(k, v, key)
         elif isinstance(value, list):
-            if len(value) > 0:
+            if value:
                 self.add_argument('--' + key, type=type(value[0]), nargs='*', default=value, help='set ' + type(value[0]).__name__ + ' list (default:' + str(value) + ')')
             else:
                 self.add_argument('--' + key, nargs='*', default=value, help='set list (default:' + str(value) + ')')

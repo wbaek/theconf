@@ -33,7 +33,7 @@ def test_singletone2(datafiles):
 )
 def test_update_and_dump(datafiles):
     filenames = [str(f) for f in datafiles.listdir()]
-    config = Config(filenames[0])
+    config = Config(filenames[0], skip_git_info=True)
 
     assert config['foo']['bar'] == 1
     assert config['foo']['baz'] == 2
