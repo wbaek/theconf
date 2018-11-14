@@ -45,6 +45,22 @@ Exception: This class is a singleton!
 'string'
 ```
 
+### git info
+
+git 정보를 가져 올 수 있을때 config에 정보를 기본으로 가지고 있는다.
+
+```python
+{
+    'git': {
+        'remote': 'https://github.com/wbaek/theconf.git',
+        'branch': 'master',
+        'hash': 'db8d899',
+        'comment': 'add basic theconf\n',
+        'status': ['M theconf/argument_parser.py']
+    }
+}
+```
+
 ## ConfigArgumentParser
 
 Config에 있는 변수를 실행시점에 변경하거나 추가로 정의하고 싶을때 사용한다.
