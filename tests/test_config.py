@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import datetime
 import pytest
 
 from theconf.config import Config
@@ -33,7 +34,9 @@ def test_singletone2(datafiles):
 )
 def test_update_and_dump(datafiles):
     filenames = [str(f) for f in datafiles.listdir()]
-    config = Config(filenames[0], skip_git_info=True)
+    config = Config(filenames[0], skip_timestamp=True, skip_git_info=True)
+
+    assert config['_version'] == 1
 
     assert config['foo']['bar'] == 1
     assert config['foo']['baz'] == 2
@@ -44,7 +47,10 @@ def test_update_and_dump(datafiles):
     assert config['foo']['baz'] == 3
 
     yaml_string = config.dump()
-    assert yaml_string == 'foo:\n  bar:\n    test: 10\n  baz: 3\n'
+    assert yaml_string == '_version: 2\nfoo:\n  bar:\n    test: 10\n  baz: 3\n'
+
+    yaml_string = config.dump()
+    assert yaml_string == '_version: 3\nfoo:\n  bar:\n    test: 10\n  baz: 3\n'
 
     config.dump(filenames[0])
 
@@ -59,5 +65,12 @@ def test_git_info():
     config = Config()
 
     assert 'wbaek/theconf.git' in config['git']['remote']
+
+    Config.clear()
+
+def test_timestamp():
+    config = Config()
+
+    assert datetime.datetime.now().strftime('%Y/%m/%d') in config['_timestamp']
 
     Config.clear()

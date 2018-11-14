@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
+import datetime
 import logging
 import yaml
 import git
@@ -56,13 +57,14 @@ class Config():
         return self
 
     def dump(self, filename=None):
+        self.conf['_version'] += 1
         dump_string = yaml.dump(self.conf, default_flow_style=False)
         if filename is not None:
             with open(filename, 'w') as f:
                 f.write(dump_string)
         return dump_string
 
-    def __init__(self, filename=None, skip_git_info=False):
+    def __init__(self, filename=None, skip_timestamp=False, skip_git_info=False):
         if Config._instance is not None:
             raise Exception('This class is a singleton!')
 
@@ -75,8 +77,13 @@ class Config():
         else:
             self.conf = {}
 
+        if '_version' not in self.conf:
+            self.conf['_version'] = 1
+        if not skip_timestamp:
+            self.conf['_timestamp'] = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
         if not skip_git_info:
             self.update_git_info()
+
         Config._instance = self
 
     def __str__(self):
