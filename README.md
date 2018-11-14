@@ -153,3 +153,7 @@ usage: sample_config.py -c CONFIG [-h] [--value VALUE] [--foo-bar FOO_BAR]
                         [--dump DUMP]
 sample_config.py: error: unrecognized arguments: --not-exists
 ```
+
+## Project Management
+[![Throughput Graph](https://graphs.waffle.io/wbaek/theconf/throughput.svg)](https://waffle.io/wbaek/theconf/metrics/throughput)
+
