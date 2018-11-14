@@ -58,6 +58,6 @@ def test_update_and_dump(datafiles):
 def test_git_info():
     config = Config()
 
-    assert config['git']['remote'] == 'https://github.com/wbaek/theconf.git'
+    assert 'wbaek/theconf.git' in config['git']['remote']
 
     Config.clear()
