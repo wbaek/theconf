@@ -7,6 +7,16 @@ Python Package for Managing Configurations
 
 python module 전역에서 쉽게 활용 가능한 global config util및 config를 쉽고 안전하게(실수를 예방하며) 활용가능한 Config전용 ArgumentParser확장 모듈
 
+## install
+
+```bash
+$ pip install git+https://github.com/wbaek/theconf.git
+```
+
+## Config
+
+Config는 main문에서 yaml 파일로 객체를 생성하고 어디서나 `Config.get_instatnce()`로 객체를 가져다 쓸 수 있다. (singleton pattern)
+
 * sample_config.yaml
 ```yaml
 value: string
@@ -21,10 +31,6 @@ data:
     dict:
         from: to
 ```
-
-## Config
-
-Config는 main문에서 yaml 파일로 객체를 생성하고 어디서나 `Config.get_instatnce()`로 객체를 가져다 쓸 수 있다. (singleton pattern)
 
 ```python
 >>> from theconf import Config
