@@ -64,7 +64,7 @@ def test_update_and_dump(datafiles):
 def test_git_info():
     config = Config()
 
-    assert 'wbaek/theconf.git' in config['git']['remote']
+    assert 'wbaek/theconf.git' in config['_git']['remote']
 
     Config.clear()
 

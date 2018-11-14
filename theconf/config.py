@@ -37,7 +37,7 @@ class Config():
                 hash_ = commit.hexsha
                 comment = commit.message
 
-                self.conf['git'] = {
+                self.conf['_git'] = {
                     'remote': remote,
                     'branch': branch,
                     'commit': {

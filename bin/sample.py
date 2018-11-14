@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--dump', type=str, default=None, help='config dump filepath')
     parsed_args = parser.parse_args()
     print(parsed_args)
-    print(C.get())
+    print(C.get().dump())
 
     if parsed_args.dump:
         C.get().dump(parsed_args.dump)
