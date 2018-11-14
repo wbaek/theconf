@@ -84,7 +84,7 @@ def test_arguments_invalid(datafiles):
     parser = ConfigArgumentParser(filename=filenames[0])
     with pytest.raises(Exception) as e:
         parser.add_argument('--foo', type=int, default=1)
-    assert str(e.value) == 'argument --foo: conflicting option string: --foo'
+    assert str(e.value) in ['argument --foo: conflicting option string: --foo', 'argument --foo: conflicting option string(s): --foo']
 
     Config.clear()
 

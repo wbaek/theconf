@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-import subprocess
 import logging
 import yaml
+import git
 
 
 LOGGER = logging.getLogger(__name__)
@@ -27,22 +27,32 @@ class Config():
 
     def update_git_info(self):
         try:
-            remote = subprocess.check_output(
-                'git remote -v | grep origin | grep fetch',
-                shell=True,
-                stderr=subprocess.PIPE
-            ).decode('utf-8').replace('origin\t', '').replace(' (fetch)\n', '')
-            if remote:
-                branch_raw = subprocess.check_output(
-                    'git branch -v | grep "*"',
-                    shell=True
-                ).decode('utf-8')[2:].split(' ')
-                if branch_raw:
-                    branch, hash_, comment = branch_raw[0], branch_raw[1], ' '.join(branch_raw[2:])
-                    status = [line.strip() for line in subprocess.check_output('git status -s', shell=True).decode('utf-8').split('\n') if line.strip()]
-                    self.conf['git'] = {'remote': remote, 'branch': branch, 'hash': hash_, 'comment': comment, 'status': status}
-        except Exception:
-            pass
+            repo = git.Repo('./')
+            remotes = [u for u in repo.remotes.origin.urls]
+            if remotes:
+                remote = remotes[0]
+                branch = repo.active_branch.name
+                commit = next(repo.iter_commits())
+                hash_ = commit.hexsha
+                comment = commit.message
+
+                self.conf['git'] = {
+                    'remote': remote,
+                    'branch': branch,
+                    'commit': {
+                        'hash': hash_,
+                        'comment': comment
+                    },
+                    'status': {
+                        'diff': [
+                            {'type': diff.change_type, 'path': diff.b_path}
+                            for diff in repo.index.diff(None)
+                        ],
+                        'untracked': repo.untracked_files
+                    }
+                }
+        except Exception as e:
+            LOGGER.debug('[update_git_info] %s:%s', type(e), str(e))
         return self
 
     def dump(self, filename=None):

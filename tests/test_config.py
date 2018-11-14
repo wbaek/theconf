@@ -54,3 +54,10 @@ def test_update_and_dump(datafiles):
     assert config['foo']['bar']['test'] == 10
     assert config['foo']['baz'] == 3
     Config.clear()
+
+def test_git_info():
+    config = Config()
+
+    assert config['git']['remote'] == 'https://github.com/wbaek/theconf.git'
+
+    Config.clear()
