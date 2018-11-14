@@ -1,0 +1,7 @@
+pyyaml
+
+pytest
+pytest-cov
+pytest-datafiles
+pylint
+coverage
