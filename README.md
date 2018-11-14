@@ -54,20 +54,35 @@ Exception: This class is a singleton!
 'string'
 ```
 
-### git info
+### extra infomations
+
+* git info
 
 git 정보를 가져 올 수 있을때 config에 정보를 기본으로 가지고 있는다.
 
-```python
-{
-    'git': {
-        'remote': 'https://github.com/wbaek/theconf.git',
-        'branch': 'master',
-        'hash': 'db8d899',
-        'comment': 'add basic theconf\n',
-        'status': ['M theconf/argument_parser.py']
-    }
-}
+```yaml
+_git:
+  branch: dev/implements
+  commit:
+    comment: 'fix some style
+
+      '
+    hash: 07564c36d2b3337597cbfebe0dbf1bf0f9a90bd0
+  remote: https://github.com/wbaek/theconf.git
+  status:
+    diff:
+    - path: README.md
+      type: M
+    untracked: []
+```
+
+* version & timestamp
+
+version정보는 dump할때마다 1씩 증가하며 timestamp는 Config객체가 생성 시점을 기록한다.
+
+```yaml
+_timestamp: 2018/11/14 16:30:31
+_version: 2
 ```
 
 ## ConfigArgumentParser
