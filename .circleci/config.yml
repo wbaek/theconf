@@ -3,6 +3,49 @@
 
 version: 2
 jobs:
+  test_pip_install:
+    docker:
+      - image: circleci/python:3.6.5
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - python3-v2-dependencies-{{ checksum "requirements.txt" }}
+          - python3-v2-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            sudo apt-get update
+            sudo apt-get install -y libcap-dev
+            pip install --upgrade setuptools
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: python3-v2-dependencies-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            pip install git+https://github.com/wbaek/theconf.git
+            rm -rf theconf
+            py.test --junit-xml test-reports/junit.xml --cov=theconf --cov-report=html tests
+
+      - store_test_results:
+          path: test-reports
+
+      - store_artifacts:
+          path: ./htmlcov
+          destination: test-coverage-python3
+
   build_python3:
     docker:
       - image: circleci/python:3.6.5
@@ -91,5 +134,6 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - test_pip_install
       - build_python2
       - build_python3
