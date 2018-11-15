@@ -25,10 +25,10 @@ setup(
     packages=find_packages(),
     # auto generated:
     name='theconf',
-    version='0.0.1',
+    version='0.1.0',
     description='',
     keywords=['singleton', 'configuration', 'config', 'yaml', 'ArgumentParser'],
-    author='wbaek',
+    author='clint',
     author_email='clint.b@kakaobrain.com',
     url='https://github.com/wbaek/theconf',
     classifiers=[],
