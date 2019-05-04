@@ -7,12 +7,13 @@ from .config import Config
 
 LOGGER = logging.getLogger(__name__)
 
+
 class ConfigArgumentParser(argparse.ArgumentParser):
     def __init__(self, filename=None, **kwargs):
         super(ConfigArgumentParser, self).__init__(add_help=False, **kwargs)
-        self.add_argument('-c', '--config', required=True, help='set config filepath')
+        self.add_argument('-c', '--config', required=(not filename), help='set config filepath')
 
-        parsed, _ = self.parse_known_args(args=None if filename is None else ['-c', filename])
+        parsed, _ = self.parse_known_args(args=None if not filename else ['-c', filename])
         Config(parsed.config)
 
         self.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS, help='show this help message and exit')

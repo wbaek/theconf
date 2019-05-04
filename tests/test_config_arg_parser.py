@@ -99,4 +99,13 @@ def test_arguments_complex(datafiles):
     args = parser.parse_args(args=['-c', filenames[0]])
     _ = args
 
+    Config.clear()
+
+    filenames = [str(f) for f in datafiles.listdir()]
+    parser = ConfigArgumentParser(filename=filenames[0])
+    args = parser.parse_args(args=[])  # -c 옵션이 없어도 filename이 명시적으로 있는 경우 parse 가능해야 함
+    _ = args
+
+    Config.clear()
+
     assert True
