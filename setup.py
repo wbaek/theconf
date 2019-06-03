@@ -15,7 +15,7 @@ long_description = """
 """
 
 if os.path.isfile(DOC_NAME):
-    with open(DOC_NAME) as fp:
+    with open(DOC_NAME, encoding='utf-8') as fp:
         long_description = fp.read()
 
 long_description = long_description or ''
