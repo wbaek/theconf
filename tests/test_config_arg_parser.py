@@ -60,6 +60,24 @@ def test_arguments_simple(datafiles):
     Config.clear()
 
 
+@pytest.mark.filterwarnings("ignore:MarkInfo")
+@pytest.mark.datafiles(
+    os.path.join(FIXTURE_DIR, 'configs', 'arguments.yaml')
+)
+def test_arguments_boolean(datafiles):
+    filenames = [str(f) for f in datafiles.listdir()]
+    parser = ConfigArgumentParser(filename=filenames[0])
+    args = parser.parse_args(args=['-c', filenames[0], '--var', 'true'])
+    
+    assert args.var == True
+    Config.clear()
+
+    parser = ConfigArgumentParser(filename=filenames[0])
+    args = parser.parse_args(args=['-c', filenames[0], '--var', 'false'])
+
+    assert args.var == False
+    Config.clear()
+
 
 @pytest.mark.filterwarnings("ignore:MarkInfo")
 @pytest.mark.datafiles(

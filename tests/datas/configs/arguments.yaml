@@ -1,2 +1,3 @@
 foo: 'test'
 bar: 1234
+var: false

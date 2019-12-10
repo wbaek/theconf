@@ -34,6 +34,8 @@ class ConfigArgumentParser(argparse.ArgumentParser):
                 self.add_argument('--' + key, type=type(value[0]), nargs='*', default=value, help='set ' + type(value[0]).__name__ + ' list (default:' + str(value) + ')')
             else:
                 self.add_argument('--' + key, nargs='*', default=value, help='set list (default:' + str(value) + ')')
+        elif isinstance(value, bool):
+            self.add_argument('--' + key, type=str2bool, default=value, help='set ' + type(value).__name__ + ' value (default:' + str(value) + ')')
         else:
             self.add_argument('--' + key, type=type(value), default=value, help='set ' + type(value).__name__ + ' value (default:' + str(value) + ')')
 
@@ -75,3 +77,14 @@ class ConfigArgumentParser(argparse.ArgumentParser):
             Config.get_instance().conf = self._set_argument_from_args(splited_keys, value, Config.get_instance().conf)
 
         return parsed_args
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
