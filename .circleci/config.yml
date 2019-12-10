@@ -88,52 +88,9 @@ jobs:
           path: ./htmlcov
           destination: test-coverage-python3
 
-  build_python2:
-    docker:
-      - image: circleci/python:2.7.15
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys:
-          - python2-v2-dependencies-{{ checksum "requirements.txt" }}
-          - python2-v2-dependencies-
-
-      - run:
-          name: install dependencies
-          command: |
-            python2 -m virtualenv venv
-            . venv/bin/activate
-            sudo apt-get update
-            sudo apt-get install -y libcap-dev
-            pip install --upgrade setuptools
-            pip install -r requirements.txt
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: python2-v2-dependencies-{{ checksum "requirements.txt" }}
-
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            py.test --junit-xml test-reports/junit.xml --cov=theconf --cov-report=html tests
-
-      - store_test_results:
-          path: test-reports
-
-      - store_artifacts:
-          path: ./htmlcov
-          destination: test-coverage-python2
-
 workflows:
   version: 2
   build_and_test:
     jobs:
       - test_pip_install
-      - build_python2
       - build_python3

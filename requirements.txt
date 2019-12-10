@@ -1,6 +1,9 @@
 pyyaml
 GitPython
 
+mlflow
+torch
+
 pytest
 pytest-cov
 pytest-datafiles

@@ -1,7 +1,6 @@
 # theconf
 [![CodeFactor](https://www.codefactor.io/repository/github/wbaek/theconf/badge)](https://www.codefactor.io/repository/github/wbaek/theconf)
 [![CircleCI](https://circleci.com/gh/wbaek/theconf.svg?style=svg)](https://circleci.com/gh/wbaek/theconf)
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/wbaek/theconf.svg?columns=all)](https://waffle.io/wbaek/theconf)
 
 Python Package for Managing Configurations
 
