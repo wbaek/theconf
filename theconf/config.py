@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-import os
 import datetime
 import logging
 import yaml
 import git
+import mlflow
 
 
 LOGGER = logging.getLogger(__name__)
+
 
 class Config():
     _instance = None
@@ -73,7 +74,7 @@ class Config():
             self.filename = filename
 
             with open(filename, 'r') as f:
-                self.conf = IncludeLoader.load(f, IncludeLoader)
+                self.conf = yaml.safe_load(f)
         else:
             self.conf = {}
 
@@ -86,47 +87,41 @@ class Config():
 
         Config._instance = self
 
+    def get(self, key, default_value=''):
+        return self.conf.get(key, default_value)
+
+    def _flatten(self, keys, values):
+        flatten_list = []
+        if isinstance(values, dict):
+            for key, value in values.items():
+                if key.startswith('_'):
+                    continue
+                v = self._flatten(keys + [key], value)
+                flatten_list += v
+        elif isinstance(values, list):
+            for key, value in enumerate(values):
+                v = self._flatten(keys + [str(key)], value)
+                flatten_list += v
+        else:
+            v = [('-'.join(keys), values)]
+            flatten_list += v
+        return flatten_list
+
+    def flatten(self):
+        return dict(self._flatten([], self.conf))
+
+    def mlflow_log(self):
+        mlflow.log_params(self.flatten())
+        return self
+
     def __str__(self):
         return 'filename:%s\nconf:%s' % (self.filename, self.conf)
 
-    def __getitem__(self, key):
+    def __contains__(self, item):
+        return item in self.conf
+
+    def __getitem__(self, key, default_value=''):
         return self.conf[key]
 
     def __setitem__(self, key, value):
         self.conf[key] = value
-
-# https://stackoverflow.com/questions/528281/how-can-i-include-a-yaml-file-inside-another
-# https://stackoverflow.com/questions/44910886/pyyaml-include-file-and-yaml-aliases-anchors-references
-class IncludeLoader(yaml.SafeLoader):
-    def __init__(self, stream):
-        self._root = os.path.split(stream.name)[0]
-        super(IncludeLoader, self).__init__(stream)
-        IncludeLoader.add_constructor('!include', IncludeLoader.include)
-
-    def include(self, node):
-        filename = os.path.join(self._root, self.construct_scalar(node)) # support for relative path
-        with open(filename, 'r') as f:
-            return IncludeLoader.load(f, IncludeLoader, self)
-
-    def compose_document(self):
-        LOGGER.info('compose_document')
-        self.get_event()
-        node = self.compose_node(None, None)
-        LOGGER.info('compose_document node: %s', node)
-
-        self.get_event()
-        LOGGER.info('compose_document anchors: %s', self.anchors)
-
-        # self.anchors = {}
-        return node
-
-    @staticmethod
-    def load(stream, loader, master=None):
-        loader_ = loader(stream)
-        if master is not None:
-            loader_.anchors = master.anchors
-            LOGGER.info('load anchors: %s', master.anchors)
-        try:
-            return loader_.get_single_data()
-        finally:
-            loader_.dispose()
