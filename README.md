@@ -174,6 +174,37 @@ usage: sample_config.py -c CONFIG [-h] [--value VALUE] [--foo-bar FOO_BAR]
 sample_config.py: error: unrecognized arguments: --not-exists
 ```
 
-## Project Management
-[![Throughput Graph](https://graphs.waffle.io/wbaek/theconf/throughput.svg)](https://waffle.io/wbaek/theconf/metrics/throughput)
+## MLflow & AverageMeter \w theconf
+```python
+import torch
+import mlflow
+from theconf import Config, ConfigArgumentParser, AverageMeter
+parser = ConfigArgumentParser(conflict_handler='resolve')
+parser.add_argument('--added', type=str, default='NOT_EXIST_CONFIG', help='ADDED_FROM_ARGPARSER')
+parser.add_argument('--dump', type=str, default=None, help='config dump filepath')
 
+# build model & dataloader
+
+meter = AverageMeter('loss')
+with mlflow.start_run(run_name='test'):
+    Config.get().mlflow_log_pararms() # log params
+    for epoch in range(10):
+        model.train()
+        for inputs, targets in dataloader: 
+            logit = model.forward(inputs)
+            loss = criterion(logit, targets)
+            meter.update('loss', loss)
+        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='train')
+        print(meter.get())
+
+        model.eval()
+        for inputs, targets in dataloader: 
+            logit = model.forward(inputs)
+            loss = criterion(logit, targets)
+            meter.update('loss', loss)
+        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='valid')
+        print(meter.get())
+
+        torch.save(model.state_dict(), 'last.pth.tar'')
+        mlflow.log_artifact('last.pth.tar', 'checkpoints')
+```

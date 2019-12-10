@@ -113,7 +113,7 @@ class Config():
             return dict(self._flatten([], self.conf[key]))
         return dict(self._flatten([], self.conf))
 
-    def mlflow_log(self, key=None):
+    def mlflow_log_pararms(self, key=None):
         mlflow.log_params(self.flatten(key))
         return self
 
