@@ -86,8 +86,9 @@ class Config():
             self.update_git_info()
 
         Config._instance = self
+        self.get = self._instance_get
 
-    def get(self, key, default_value=''):
+    def _instance_get(self, key, default_value=''):
         return self.conf.get(key, default_value)
 
     def _flatten(self, keys, values):
@@ -107,11 +108,13 @@ class Config():
             flatten_list += v
         return flatten_list
 
-    def flatten(self):
+    def flatten(self, key=None):
+        if key is not None:
+            return dict(self._flatten([], self.conf[key]))
         return dict(self._flatten([], self.conf))
 
-    def mlflow_log(self):
-        mlflow.log_params(self.flatten())
+    def mlflow_log(self, key=None):
+        mlflow.log_params(self.flatten(key))
         return self
 
     def __str__(self):

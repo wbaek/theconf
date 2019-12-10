@@ -40,6 +40,8 @@ setup(
     install_requires=[
         'pyyaml',
         'GitPython',
+        'mlflow',
+        'torch'
     ],
     tests_require=[],
 )

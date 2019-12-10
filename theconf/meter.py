@@ -18,8 +18,8 @@ class AverageMeter(torch.nn.Module):
         self.keys = keys
         self.reset()
 
-    def reset(self):
-        if self.use_mlflow:
+    def reset(self, use_mlflow=False):
+        if self.use_mlflow or use_mlflow:
             mlflow.log_metrics(self.get(), step=self.step)
 
         for key in self.keys:
@@ -46,6 +46,8 @@ class AverageMeter(torch.nn.Module):
 
     def __getitem__(self, key):
         if key not in self._buffers:
+            return 0.0
+        if self._buffers[key + '_count'] == 0:
             return 0.0
         return self._buffers[key].item() / self._buffers[key + '_count'].item()
 

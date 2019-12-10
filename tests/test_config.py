@@ -14,6 +14,7 @@ FIXTURE_DIR = os.path.join(
 def test_singletone():
     conf1 = Config.get_instance()
     conf2 = Config.get_instance()
+    conf3 = Config.get()
     assert conf1 == conf2
     Config.clear()
 
