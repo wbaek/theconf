@@ -25,9 +25,9 @@ setup(
     packages=find_packages(),
     # auto generated:
     name='theconf',
-    version='0.1.0',
+    version='0.1.1',
     description='',
-    keywords=['singleton', 'configuration', 'config', 'yaml', 'ArgumentParser'],
+    keywords=['singleton', 'configuration', 'config', 'yaml', 'ArgumentParser', 'mlflow', 'torch'],
     author='clint',
     author_email='clint.b@kakaobrain.com',
     url='https://github.com/wbaek/theconf',
