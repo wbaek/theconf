@@ -194,17 +194,17 @@ with mlflow.start_run(run_name='test'):
             logit = model.forward(inputs)
             loss = criterion(logit, targets)
             meter.update('loss', loss)
-        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='train')
         print(meter.get())
-
+        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='train')
+        
         model.eval()
         for inputs, targets in dataloader: 
             logit = model.forward(inputs)
             loss = criterion(logit, targets)
             meter.update('loss', loss)
-        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='valid')
         print(meter.get())
+        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='valid')
 
-        torch.save(model.state_dict(), 'last.pth.tar'')
+        torch.save(model.state_dict(), 'last.pth.tar')
         mlflow.log_artifact('last.pth.tar', 'checkpoints')
 ```
