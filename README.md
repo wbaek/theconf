@@ -174,7 +174,7 @@ usage: sample_config.py -c CONFIG [-h] [--value VALUE] [--foo-bar FOO_BAR]
 sample_config.py: error: unrecognized arguments: --not-exists
 ```
 
-## MLflow & AverageMeter \w theconf
+## AverageMeter \w log for tensorboard & mlflow
 ```python
 import torch
 import mlflow
@@ -185,7 +185,7 @@ parser.add_argument('--dump', type=str, default=None, help='config dump filepath
 
 # build model & dataloader
 
-meter = AverageMeter('loss')
+meter = AverageMeter('loss', tensorboard_path='./tensorboard', prefixs=['train', 'valid'])
 with mlflow.start_run(run_name='test'):
     Config.get().mlflow_log_pararms() # log params
     for epoch in range(10):
@@ -195,7 +195,8 @@ with mlflow.start_run(run_name='test'):
             loss = criterion(logit, targets)
             meter.update('loss', loss)
         print(meter.get())
-        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='train')
+        meter.log('train', tensorboard=True, mlflow=True)
+        meter.reset(step=epoch)
         
         model.eval()
         for inputs, targets in dataloader: 
@@ -203,7 +204,8 @@ with mlflow.start_run(run_name='test'):
             loss = criterion(logit, targets)
             meter.update('loss', loss)
         print(meter.get())
-        meter.reset(step=epoch, use_mlflow=True, mlflow_prefix='valid')
+        meter.log('valid', tensorboard=True, mlflow=True)
+        meter.reset(step=epoch)
 
         torch.save(model.state_dict(), 'last.pth.tar')
         mlflow.log_artifact('last.pth.tar', 'checkpoints')
