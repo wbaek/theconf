@@ -43,6 +43,12 @@ class AverageMeter(torch.nn.Module):
         if mlflow:
             module_mlflow.log_metrics(self.get(prefix=prefix), step=step)
 
+    def close(self, mlflow=False):
+        for prefix, writer in self.writers.items():
+            writer.close()
+        if mlflow:
+            module_mlflow.end_run()
+
     def update(self, key, value, n=1):
         if isinstance(value, torch.Tensor):
             value = value.detach()
