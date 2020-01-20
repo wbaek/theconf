@@ -1,33 +1,53 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=arguments-differ, abstract-method
 from __future__ import absolute_import
+import os
 import logging
 
-import mlflow
+import mlflow as module_mlflow
 import torch
+from torch.utils.tensorboard import SummaryWriter
 
 
 LOGGER = logging.getLogger(__name__)
 
 
 class AverageMeter(torch.nn.Module):
-    def __init__(self, *keys, use_mlflow=False):
+    def __init__(self, *keys, tensorboard_path=None, prefixs=['train', 'valid']):
         super(AverageMeter, self).__init__()
         self.step = 0
-        self.use_mlflow = use_mlflow
         self.keys = keys
         self.reset()
 
-    def reset(self, step=None, use_mlflow=False, mlflow_prefix=None):
-        self.step = step if step is not None else self.step + 1
+        self.tensorboard_path = tensorboard_path
+        if tensorboard_path:
+            self.writers = {prefix: SummaryWriter(os.path.join(tensorboard_path, prefix)) for prefix in prefixs}
+        else:
+            self.writers = {}
 
-        if self.use_mlflow or use_mlflow:
-            mlflow.log_metrics(self.get(prefix=mlflow_prefix), step=self.step)
+    def reset(self, step=None):
+        self.step = step if step is not None else self.step + 1
 
         for key in self.keys:
             device = self._buffers[key].device if key in self._buffers else torch.device('cpu')
             self.register_buffer(key, torch.zeros(1, dtype=torch.float, device=device))
             self.register_buffer(key + '_count', torch.zeros(1, dtype=torch.int32, device=device))
+
+    def log(self, prefix, step=None, tensorboard=True, mlflow=False):
+        step = step if step is not None else self.step
+
+        if self.tensorboard_path and tensorboard:
+            for key, value in self.get().items():
+                self.writers[prefix].add_scalar('metrics/%s' % key, value, global_step=step)
+
+        if mlflow:
+            module_mlflow.log_metrics(self.get(prefix=prefix), step=step)
+
+    def close(self, mlflow=False):
+        for prefix, writer in self.writers.items():
+            writer.close()
+        if mlflow:
+            module_mlflow.end_run()
 
     def update(self, key, value, n=1):
         if isinstance(value, torch.Tensor):

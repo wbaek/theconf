@@ -2,7 +2,8 @@ pyyaml
 GitPython
 
 mlflow
-torch
+tensorboard
+torch >= 1.2.0
 
 pytest
 pytest-cov
