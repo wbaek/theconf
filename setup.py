@@ -25,7 +25,7 @@ setup(
     packages=find_packages(),
     # auto generated:
     name='theconf',
-    version='0.1.2',
+    version='0.1.3',
     description='',
     keywords=['singleton', 'configuration', 'config', 'yaml', 'ArgumentParser', 'mlflow', 'torch'],
     author='clint',
