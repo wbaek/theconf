@@ -9,11 +9,18 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ConfigArgumentParser(argparse.ArgumentParser):
-    def __init__(self, filename=None, **kwargs):
+    def __init__(self, filename=None, lazy=False, **kwargs):
         super(ConfigArgumentParser, self).__init__(add_help=False, **kwargs)
         self.add_argument('-c', '--config', required=(not filename), help='set config filepath')
 
-        parsed, _ = self.parse_known_args(args=None if not filename else ['-c', filename])
+        self.filename = filename
+        self.lazy = lazy
+        if not lazy:
+            self._add_arguments_from_config(None if not self.filename else ['-c', self.filename])
+
+
+    def _add_arguments_from_config(self, args, lazy=False):
+        parsed, _ = self.parse_known_args(args=args)
         Config(parsed.config)
 
         self.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS, help='show this help message and exit')
@@ -61,6 +68,8 @@ class ConfigArgumentParser(argparse.ArgumentParser):
         return rv
 
     def parse_args(self, args=None, namespace=None):
+        if self.lazy:
+            self._add_arguments_from_config(args)
         parsed_args = super(ConfigArgumentParser, self).parse_args(args, namespace)
 
         used = []

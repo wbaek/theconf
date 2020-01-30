@@ -127,3 +127,55 @@ def test_arguments_complex(datafiles):
     Config.clear()
 
     assert True
+
+
+@pytest.mark.filterwarnings("ignore:MarkInfo")
+@pytest.mark.datafiles(
+    os.path.join(FIXTURE_DIR, 'configs', 'arguments.yaml')
+)
+def test_arguments_simple_lazy(datafiles):
+    filenames = [str(f) for f in datafiles.listdir()]
+    parser = ConfigArgumentParser(lazy=True)
+    args = parser.parse_args(args=['-c', filenames[0]])
+
+    assert args.foo == 'test'
+    assert args.bar == 1234
+    assert Config.get_instance()['foo'] == 'test'
+    assert Config.get_instance()['bar'] == 1234
+
+    Config.clear()
+
+    parser = ConfigArgumentParser(lazy=True)
+    args = parser.parse_args(args=['-c', filenames[0], '--foo', 'value'])
+
+    assert args.foo == 'value'
+    assert args.bar == 1234
+    assert Config.get_instance()['foo'] == 'value'
+    assert Config.get_instance()['bar'] == 1234
+
+    Config.clear()
+
+    parser = ConfigArgumentParser(lazy=True)
+    args = parser.parse_args(args=['-c', filenames[0], '--foo', 'value', '--bar', '4321'])
+
+    assert args.foo == 'value'
+    assert args.bar == 4321
+    assert Config.get_instance()['foo'] == 'value'
+    assert Config.get_instance()['bar'] == 4321
+
+    Config.clear()
+
+    parser = ConfigArgumentParser(lazy=True)
+    parser.add_argument('--baz', type=float, default=0.1)
+    args = parser.parse_args(args=['-c', filenames[0], '--foo', 'value', '--bar', '4321'])
+
+    assert args.foo == 'value'
+    assert args.bar == 4321
+    assert args.baz == 0.1
+    assert Config.get_instance()['foo'] == 'value'
+    assert Config.get_instance()['bar'] == 4321
+    assert Config.get_instance()['baz'] == 0.1
+
+    Config.clear()
+
+
