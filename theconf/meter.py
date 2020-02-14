@@ -45,6 +45,7 @@ class AverageMeter(torch.nn.Module):
 
     def close(self, mlflow=False):
         for prefix, writer in self.writers.items():
+            writer.flush()
             writer.close()
         if mlflow:
             module_mlflow.end_run()
