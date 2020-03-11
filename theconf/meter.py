@@ -76,4 +76,4 @@ class AverageMeter(torch.nn.Module):
         return self._buffers[key].item() / self._buffers[key + '_count'].item()
 
     def __str__(self):
-        return ', '.join(['%s:%.3f' % (str(key), self.__getitem__(key)) for key in self.keys])
+        return ', '.join(['%s:%.4f' % (str(key), self.__getitem__(key)) for key in self.keys])

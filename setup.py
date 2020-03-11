@@ -41,7 +41,8 @@ setup(
         'pyyaml',
         'GitPython',
         'mlflow',
-        'torch'
+        'torch',
+        'tensorboard'
     ],
     tests_require=[],
 )
