@@ -33,11 +33,25 @@ class AverageMeter(torch.nn.Module):
             self.register_buffer(key, torch.zeros(1, dtype=torch.float, device=device))
             self.register_buffer(key + '_count', torch.zeros(1, dtype=torch.int32, device=device))
 
-    def log(self, prefix, step=None, tensorboard=True, mlflow=False):
+    def log(self, prefix, step=None, keep_best_keys=[], tensorboard=True, mlflow=False):
         step = step if step is not None else self.step
 
+        for key in keep_best_keys:
+            if key not in self._buffers:
+                continue
+            best_key = key + '_best'
+            device = self._buffers[key].device if key in self._buffers else torch.device('cpu')
+            last_value = self._buffers[best_key] if best_key in self._buffers else torch.zeros(1, dtype=torch.float, device=device)
+            last_count = self._buffers[best_key + '_count'] if best_key in self._buffers else torch.zeros(1, dtype=torch.float, device=device)
+
+            value = max(last_value, self._buffers[key])
+            count = max(last_count, self._buffers[key + '_count'])
+
+            self.register_buffer(best_key, value)
+            self.register_buffer(best_key + '_count', count)
+
         if self.tensorboard_path and tensorboard:
-            for key, value in self.get().items():
+            for key, value in self.get(with_best=True).items():
                 self.writers[prefix].add_scalar('metrics/%s' % key, value, global_step=step)
 
         if mlflow:
@@ -63,10 +77,13 @@ class AverageMeter(torch.nn.Module):
             self.update(key, value, n)
         return self
 
-    def get(self, prefix=None):
+    def get(self, prefix=None, with_best=False):
+        keys = [key for key in self._buffers.keys() if '_count' not in key]
+        if not with_best:
+            keys = [key for key in keys if '_best' not in key]
         if prefix is not None:
-            return {prefix + '_' + key: self.__getitem__(key) for key in self.keys}
-        return {key: self.__getitem__(key) for key in self.keys}
+            return {prefix + '_' + key: self.__getitem__(key) for key in keys}
+        return {key: self.__getitem__(key) for key in keys}
 
     def __getitem__(self, key):
         if key not in self._buffers:
@@ -75,5 +92,5 @@ class AverageMeter(torch.nn.Module):
             return 0.0
         return self._buffers[key].item() / self._buffers[key + '_count'].item()
 
-    def __str__(self):
-        return ', '.join(['%s:%.4f' % (str(key), self.__getitem__(key)) for key in self.keys])
+    def __str__(self, with_best=False):
+        return ', '.join(['%s:%.4f' % (str(key), value) for key, value in self.get(with_best=with_best).items()])
