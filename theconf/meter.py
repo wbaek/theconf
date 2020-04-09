@@ -33,7 +33,7 @@ class AverageMeter(torch.nn.Module):
             self.register_buffer(key, torch.zeros(1, dtype=torch.float, device=device))
             self.register_buffer(key + '_count', torch.zeros(1, dtype=torch.int32, device=device))
 
-    def log(self, prefix, step=None, keep_best_keys=[], tensorboard=True, mlflow=False):
+    def log(self, prefix, step=None, tensorboard=True, mlflow=False, keep_best_keys=[], with_best=False):
         step = step if step is not None else self.step
 
         for key in keep_best_keys:
@@ -51,7 +51,7 @@ class AverageMeter(torch.nn.Module):
             self.register_buffer(best_key + '_count', count)
 
         if self.tensorboard_path and tensorboard:
-            for key, value in self.get(with_best=True).items():
+            for key, value in self.get(with_best=with_best).items():
                 self.writers[prefix].add_scalar('metrics/%s' % key, value, global_step=step)
 
         if mlflow:
