@@ -25,9 +25,9 @@ setup(
     packages=find_packages(),
     # auto generated:
     name='theconf',
-    version='0.1.3',
+    version='0.1.4',
     description='',
-    keywords=['singleton', 'configuration', 'config', 'yaml', 'ArgumentParser', 'mlflow', 'torch'],
+    keywords=['singleton', 'configuration', 'config', 'yaml', 'ArgumentParser'],
     author='clint',
     author_email='clint.b@kakaobrain.com',
     url='https://github.com/wbaek/theconf',
@@ -40,8 +40,6 @@ setup(
     install_requires=[
         'pyyaml',
         'GitPython',
-        'mlflow',
-        'torch'
     ],
     tests_require=[],
 )

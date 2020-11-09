@@ -64,7 +64,7 @@ def test_average_meta_str():
         'key1': 3 * torch.ones(1),
     })
 
-    assert str(meter) == 'key1:2.500, key2:5.000'
+    assert str(meter) == 'key1:2.5000, key2:5.0000'
 
 
 def test_average_meta_not_exist_key():

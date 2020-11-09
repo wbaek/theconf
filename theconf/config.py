@@ -4,7 +4,6 @@ import datetime
 import logging
 import yaml
 import git
-import mlflow
 
 
 LOGGER = logging.getLogger(__name__)
@@ -112,10 +111,6 @@ class Config():
         if key is not None:
             return dict(self._flatten([], self.conf[key]))
         return dict(self._flatten([], self.conf))
-
-    def mlflow_log_pararms(self, key=None):
-        mlflow.log_params(self.flatten(key))
-        return self
 
     def __str__(self):
         return 'filename:%s\nconf:%s' % (self.filename, self.conf)
