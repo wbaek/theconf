@@ -36,7 +36,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pip install git+https://github.com/wbaek/theconf.git
+            pip install .
             rm -rf theconf
             py.test --junit-xml test-reports/junit.xml --cov=theconf --cov-report=html tests/test_config.py tests/test_config_arg_parser.py tests/test_multiple_config.py
 
