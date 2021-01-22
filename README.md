@@ -106,11 +106,11 @@ if parsed_args.dump:
 
 ```bash
 $ python sample_config.py -h
-usage: sample_config.py -c CONFIG
+usage: sample_config.py -c CONFIG [CONFIG ...]
 sample_config.py: error: the following arguments are required: -c/--config
 
 $ python simple_config.py -c sample_config.yaml -h
-usage: sample.py -c CONFIG [-h] [--value VALUE] [--foo-bar FOO_BAR]
+usage: sample.py -c CONFIG [CONFIG ...] [-h] [--value VALUE] [--foo-bar FOO_BAR]
                  [--foo-baz FOO_BAZ] [--data-string DATA_STRING]
                  [--data-int DATA_INT] [--data-float DATA_FLOAT]
                  [--data-list [DATA_LIST [DATA_LIST ...]]]
@@ -118,7 +118,7 @@ usage: sample.py -c CONFIG [-h] [--value VALUE] [--foo-bar FOO_BAR]
                  [--dump DUMP]
 
 optional arguments:
-  -c CONFIG, --config CONFIG
+  -c CONFIG [CONFIG ...], --config CONFIG [CONFIG ...]
                         set config filepath
   -h, --help            show this help message and exit
   --value VALUE         set str value (default:string)
@@ -165,13 +165,46 @@ foo: {bar: text, baz: 123}
 value: string
 
 $ python sample_config.py -c sample_config.yaml --not-exists
-usage: sample_config.py -c CONFIG [-h] [--value VALUE] [--foo-bar FOO_BAR]
+usage: sample_config.py -c CONFIG [CONFIG ...] [-h] [--value VALUE] [--foo-bar FOO_BAR]
                         [--foo-baz FOO_BAZ] [--data-string DATA_STRING]
                         [--data-int DATA_INT] [--data-float DATA_FLOAT]
                         [--data-list [DATA_LIST [DATA_LIST ...]]]
                         [--data-dict-from DATA_DICT_FROM] [--added ADDED]
                         [--dump DUMP]
 sample_config.py: error: unrecognized arguments: --not-exists
+```
+
+
+## Multiple Configs
+
+Config파일을 여러개를 입력으로 받아 목적에 따라 나눠서 관리하고 합쳐서 사용한다.
+config파일에 동일한 key값이 존재하면 나중에 입력받은 config로 overwrite하고 key가 없다면 추가된다.
+
+```bash
+$ python sample.py -c config.yaml extra.yaml
+Namespace(added='NOT_EXIST_CONFIG', config=['config.yaml', 'extra.yaml'], data_dict_from='to', data_float=0.1, data_float2=0.3, data_int=1, data_list=[1, 2, 3], data_string='new text', dump=None, foo_bar='text', foo_baz=123, value='string')
+_timestamp: 2021/01/22 19:58:04
+_version: 2
+added: NOT_EXIST_CONFIG
+config:
+- config.yaml
+- extra.yaml
+data:
+  dict:
+    from: to
+  float: 0.1
+  float2: 0.3
+  int: 1
+  list:
+  - 1
+  - 2
+  - 3
+  string: new text
+dump: null
+foo:
+  bar: text
+  baz: 123
+value: string
 ```
 
 ## AverageMeter \w log for tensorboard & mlflow
