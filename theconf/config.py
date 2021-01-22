@@ -64,18 +64,20 @@ class Config():
                 f.write(dump_string)
         return dump_string
 
-    def __init__(self, filename=None, skip_timestamp=False, skip_git_info=False):
+    def __init__(self, filenames=[], skip_timestamp=False, skip_git_info=False):
         if Config._instance is not None:
             raise Exception('This class is a singleton!')
 
-        if filename is not None:
-            LOGGER.info('load config at: %s', filename)
-            self.filename = filename
+        self.conf = {}
+        if filenames:
+            filenames = filenames if isinstance(filenames, list) else [filenames]
+            LOGGER.info('load config at: %s', ','.join(filenames))
+            self.filenames = filenames
 
-            with open(filename, 'r') as f:
-                self.conf = yaml.safe_load(f)
-        else:
-            self.conf = {}
+            for filename in filenames:
+                with open(filename, 'r') as f:
+                    # self.conf = yaml.safe_load(f)
+                    update_dict(self.conf, yaml.safe_load(f))
 
         if '_version' not in self.conf:
             self.conf['_version'] = 1
@@ -113,7 +115,7 @@ class Config():
         return dict(self._flatten([], self.conf))
 
     def __str__(self):
-        return 'filename:%s\nconf:%s' % (self.filename, self.conf)
+        return 'filenames:%s\nconf:%s' % (','.join(self.filenames), self.conf)
 
     def __contains__(self, item):
         return item in self.conf
@@ -123,3 +125,13 @@ class Config():
 
     def __setitem__(self, key, value):
         self.conf[key] = value
+
+
+def update_dict(dict1, dict2):
+    for key, value in dict2.items():
+        if key not in dict1:
+            dict1[key] = value
+        elif isinstance(value, dict):
+            update_dict(dict1[key], value)
+        else:
+            dict1[key] = value

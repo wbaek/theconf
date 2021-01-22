@@ -16,7 +16,7 @@ FIXTURE_DIR = os.path.join(
 )
 def test_arguments_simple(datafiles):
     filenames = [str(f) for f in datafiles.listdir()]
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     args = parser.parse_args(args=['-c', filenames[0]])
 
     assert args.foo == 'test'
@@ -26,7 +26,7 @@ def test_arguments_simple(datafiles):
 
     Config.clear()
 
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     args = parser.parse_args(args=['-c', filenames[0], '--foo', 'value'])
 
     assert args.foo == 'value'
@@ -36,7 +36,7 @@ def test_arguments_simple(datafiles):
 
     Config.clear()
 
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     args = parser.parse_args(args=['-c', filenames[0], '--foo', 'value', '--bar', '4321'])
 
     assert args.foo == 'value'
@@ -46,7 +46,7 @@ def test_arguments_simple(datafiles):
 
     Config.clear()
 
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     parser.add_argument('--baz', type=float, default=0.1)
     args = parser.parse_args(args=['-c', filenames[0], '--foo', 'value', '--bar', '4321'])
 
@@ -66,13 +66,13 @@ def test_arguments_simple(datafiles):
 )
 def test_arguments_boolean(datafiles):
     filenames = [str(f) for f in datafiles.listdir()]
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     args = parser.parse_args(args=['-c', filenames[0], '--var', 'true'])
     
     assert args.var == True
     Config.clear()
 
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     args = parser.parse_args(args=['-c', filenames[0], '--var', 'false'])
 
     assert args.var == False
@@ -85,21 +85,21 @@ def test_arguments_boolean(datafiles):
 )
 def test_arguments_invalid(datafiles):
     filenames = [str(f) for f in datafiles.listdir()]
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     with pytest.raises(SystemExit) as e:
         _ = parser.parse_args(args=['-c', filenames[0], '--baz', 'test'])
     # pytest: error: unrecognized arguments: --baz test
 
     Config.clear()
 
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     with pytest.raises(SystemExit) as e:
         _ = parser.parse_args(args=['-c', filenames[0], '--bar', 'test'])
     # pytest: error: argument --bar: invalid int value: 'test'
 
     Config.clear()
 
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     with pytest.raises(Exception) as e:
         parser.add_argument('--foo', type=int, default=1)
     assert str(e.value) in ['argument --foo: conflicting option string: --foo', 'argument --foo: conflicting option string(s): --foo']
@@ -113,14 +113,14 @@ def test_arguments_invalid(datafiles):
 )
 def test_arguments_complex(datafiles):
     filenames = [str(f) for f in datafiles.listdir()]
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     args = parser.parse_args(args=['-c', filenames[0]])
     _ = args
 
     Config.clear()
 
     filenames = [str(f) for f in datafiles.listdir()]
-    parser = ConfigArgumentParser(filename=filenames[0])
+    parser = ConfigArgumentParser(filenames=filenames[0])
     args = parser.parse_args(args=[])  # -c 옵션이 없어도 filename이 명시적으로 있는 경우 parse 가능해야 함
     _ = args
 

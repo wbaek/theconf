@@ -9,15 +9,15 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ConfigArgumentParser(argparse.ArgumentParser):
-    def __init__(self, filename=None, lazy=False, **kwargs):
+    def __init__(self, filenames=[], lazy=False, **kwargs):
         super(ConfigArgumentParser, self).__init__(add_help=False, **kwargs)
-        self.add_argument('-c', '--config', required=(not filename), help='set config filepath')
+        self.add_argument('-c', '--config', nargs='+', required=(not filenames), help='set config filepath')
 
-        self.filename = filename
+        filenames = filenames if isinstance(filenames, list) else [filenames]
+        self.filenames = filenames
         self.lazy = lazy
         if not lazy:
-            self._add_arguments_from_config(None if not self.filename else ['-c', self.filename])
-
+            self._add_arguments_from_config(None if not self.filenames else ['-c'] + self.filenames)
 
     def _add_arguments_from_config(self, args, lazy=False):
         parsed, _ = self.parse_known_args(args=args)
