@@ -38,14 +38,13 @@ class ConfigArgumentParser(argparse.ArgumentParser):
                 self._add_argument(k, v, key)
         elif isinstance(value, list):
             if value:
-                if not isinstance(value[0], (list, dict)):
-                    self.add_argument('--' + key, type=type(value[0]), nargs='*', default=value, help='set ' + type(value[0]).__name__ + ' list (default:' + str(value) + ')')
+                self.add_argument('--' + key, type=type(value[0]), nargs='*', default=value, help='set ' + type(value[0]).__name__ + ' list (default:' + str(value).replace('%', '%%') + ')')
             else:
                 self.add_argument('--' + key, nargs='*', default=value, help='set list (default:' + str(value) + ')')
         elif isinstance(value, bool):
-            self.add_argument('--' + key, type=str2bool, default=value, help='set ' + type(value).__name__ + ' value (default:' + str(value) + ')')
+            self.add_argument('--' + key, type=str2bool, default=value, help='set ' + type(value).__name__ + ' value (default:' + str(value).replace('%', '%%') + ')')
         else:
-            self.add_argument('--' + key, type=type(value), default=value, help='set ' + type(value).__name__ + ' value (default:' + str(value) + ')')
+            self.add_argument('--' + key, type=type(value), default=value, help='set ' + type(value).__name__ + ' value (default:' + str(value).replace('%', '%%') + ')')
 
     def _set_argument_from_conf(self, parsed_args, key, value, prefix=None):
         key = key if prefix is None else '_'.join([prefix, key])
