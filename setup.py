@@ -25,7 +25,7 @@ setup(
     packages=find_packages(),
     # auto generated:
     name='theconf',
-    version='0.1.6',
+    version='0.1.7',
     description='',
     keywords=['singleton', 'configuration', 'config', 'yaml', 'ArgumentParser'],
     author='clint',
