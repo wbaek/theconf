@@ -28,7 +28,7 @@ data:
     float: 0.1
     list: [1, 2, 3]
     dict:
-        from: to
+        key: value
 ```
 
 ```python
@@ -48,8 +48,18 @@ Exception: This class is a singleton!
 
 ```python
 >>> from theconf import Config as C
->>> _ = Config('sample_config.yaml')
+>>> _ = C('sample_config.yaml')
 >>> C.get()['value']
+'string'
+```
+
+### namedtuple
+> namedtuple are invalid if they are repeated or conflict with Python keywords.
+
+```python
+>>> from theconf import Config as C
+>>> _ = C('sample_config.yaml')
+>>> C.get().value
 'string'
 ```
 
