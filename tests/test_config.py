@@ -114,7 +114,7 @@ def test_get_default():
 
 
 def test_git_info():
-    config = Config()
+    config = Config(skip_git_info=False)
 
     if '_git' in config:
         assert 'wbaek/theconf.git' in config['_git']['remote']
@@ -123,8 +123,30 @@ def test_git_info():
 
 
 def test_timestamp():
-    config = Config()
+    config = Config(skip_timestamp=False)
 
     assert datetime.datetime.now().strftime('%Y/%m/%d') in config['_timestamp']
 
     Config.clear()
+
+
+@pytest.mark.filterwarnings("ignore:MarkInfo")
+@pytest.mark.datafiles(
+    os.path.join(FIXTURE_DIR, 'configs', 'basic.yaml')
+)
+def test_namedtuple(datafiles):
+    filenames = [str(f) for f in datafiles.listdir()]
+    config = Config(filenames[0], skip_timestamp=True, skip_git_info=True)
+
+    assert hasattr(config, 'conf') == True
+    assert isinstance(config.conf, dict)
+
+    config.foo.bar == 1
+    config.foo.baz == 2
+
+    config.clear()
+
+
+
+
+

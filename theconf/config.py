@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 import datetime
 import logging
+from collections import namedtuple
 import yaml
 import git
 
@@ -64,7 +65,7 @@ class Config():
                 f.write(dump_string)
         return dump_string
 
-    def __init__(self, filenames=[], skip_timestamp=False, skip_git_info=False):
+    def __init__(self, filenames=[], skip_timestamp=True, skip_git_info=True):
         if Config._instance is not None:
             raise Exception('This class is a singleton!')
 
@@ -126,6 +127,10 @@ class Config():
     def __setitem__(self, key, value):
         self.conf[key] = value
 
+    def __getattr__(self, key):
+        tuples = dict_to_namedtuple('conf', self.conf)
+        return getattr(tuples, key)
+
 
 def update_dict(dict1, dict2):
     for key, value in dict2.items():
@@ -135,3 +140,10 @@ def update_dict(dict1, dict2):
             update_dict(dict1[key], value)
         else:
             dict1[key] = value
+
+
+def dict_to_namedtuple(typename, data):
+    keys = [k for k in data.keys() if not k.startswith('_')]
+    return namedtuple(typename, keys)(
+        *(dict_to_namedtuple(typename + '_' + k, v) if isinstance(v, dict) else v for k, v in data.items() if k in keys)
+    )
