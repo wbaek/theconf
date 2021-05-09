@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import datetime
 import logging
 from collections import namedtuple
+import keyword
 import yaml
 import git
 
@@ -143,7 +144,7 @@ def update_dict(dict1, dict2):
 
 
 def dict_to_namedtuple(typename, data):
-    keys = [k for k in data.keys() if not k.startswith('_')]
+    keys = [k for k in data.keys() if not k.startswith('_') and k not in keyword.kwlist]
     return namedtuple(typename, keys)(
         *(dict_to_namedtuple(typename + '_' + k, v) if isinstance(v, dict) else v for k, v in data.items() if k in keys)
     )
